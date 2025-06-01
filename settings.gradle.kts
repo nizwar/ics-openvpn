@@ -20,6 +20,7 @@ dependencyResolutionManagement {
 }
 
 include(":main")
+include(":openvpn-library")
 include(":tlsexternalcertprovider")
 include(":remoteExample")
 //include(":yubikeyplugin")
