@@ -8,4 +8,4 @@ install:
   - echo "Installing dependencies"
   - which swig || echo "SWIG not available, will try without it"
   - which cmake || echo "CMake not available, will try without it"
-  - ./gradlew :openvpn-library:assembleOvpn23Release :openvpn-library:publishToMavenLocal
+  - ./gradlew :openvpn-library:assembleOvpn23Release :openvpn-library:publishOvpn23PublicationToMavenLocal

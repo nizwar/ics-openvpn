@@ -4,49 +4,87 @@ A ready-to-use Android library (AAR) built from the popular [ICS OpenVPN](https:
 
 ## Features
 
-- 🔒 **OpenVPN 2 and OpenVPN 3 Support** - Choose between two flavors
+- 🔒 **OpenVPN 3 Support** - Modern OpenVPN 3 C++ library implementation
 - 📦 **AAR Format** - Easy integration as Android library
 - 🚀 **JitPack Distribution** - Simple dependency management
 - 🔧 **Ready to Use** - Pre-compiled with all native dependencies
 - 📱 **Android 21+** - Supports Android 5.0 and above
 
-## Usage with JitPack
+## Installation
 
-Add the JitPack repository to your root `build.gradle` file:
+### Step 1: Add JitPack Repository
 
-```gradle
-allprojects {
+Add JitPack to your project's `settings.gradle.kts` (or `settings.gradle`):
+
+```kotlin
+dependencyResolutionManagement {
     repositories {
-        // ... other repositories
-        maven { url 'https://jitpack.io' }
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") } // Add this line
     }
 }
 ```
 
-Add the dependency to your app module's `build.gradle` file:
+### Step 2: Add Dependency
 
-### OpenVPN 3 variant (recommended):
-```gradle
+Add the dependency to your app's `build.gradle.kts` (or `build.gradle`):
+
+```kotlin
 dependencies {
-    implementation 'com.github.nizwar:ics-openvpn:TAG'
+    // ICS OpenVPN Library (OpenVPN 3)
+    implementation("com.github.nizwar:ics-openvpn:v1.0.0")
 }
 ```
 
-### OpenVPN 2 variant:
-```gradle
-dependencies {
-    implementation 'com.github.nizwar:ics-openvpn-v2:TAG'
+## Usage
+
+### Basic Setup
+
+```kotlin
+import de.blinkt.openvpn.core.ProfileManager
+import de.blinkt.openvpn.core.VpnStatus
+import de.blinkt.openvpn.core.VPNLaunchHelper
+import de.blinkt.openvpn.VpnProfile
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Initialize ProfileManager
+        val profileManager = ProfileManager.getInstance(this)
+        
+        // Listen to VPN status changes
+        VpnStatus.addStateListener { state, logMessage, localizedResId, level, connectedProfile ->
+            // Handle VPN state changes
+        }
+    }
 }
 ```
 
-Replace `TAG` with the latest release tag or commit hash.
+### Loading and Starting VPN Profile
 
-## Features
+```kotlin
+// Load VPN profile from .ovpn file
+val vpnProfile = ProfileManager.getInstance(this).getProfileByName("your-profile-name")
 
-- **Two OpenVPN variants**: Choose between OpenVPN 2 and OpenVPN 3
-- **Full Android support**: Native libraries for all Android architectures
-- **Complete VPN functionality**: All features from the original ICS OpenVPN app
-- **Easy integration**: Use as a library in your own Android applications
+// Or create from config string
+val configString = "your-ovpn-config-content"
+val vpnProfile = VpnProfile.getProfile("profile-name", configString)
+
+// Start VPN connection
+VPNLaunchHelper.startOpenVpn(vpnProfile, this)
+```
+
+### Permissions
+
+Add required permissions to your `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+```
 
 ## Architecture Support
 
@@ -56,22 +94,15 @@ The library includes native binaries for:
 - x86
 - x86_64
 
-## Requirements
+## Build Information
 
-- Android API 21+ (Android 5.0+)
-- AndroidX support
+- **Android Gradle Plugin**: 8.7.3
+- **Kotlin**: 2.1.0
+- **Target SDK**: 35 (Android 14)
+- **Min SDK**: 21 (Android 5.0)
+- **Java Version**: 17
 
-## License
-
-This project maintains the same license as the original ICS OpenVPN:
-- GNU General Public License v2.0
-- See [LICENSE.txt](doc/LICENSE.txt) for full terms
-
-## Original Project
-
-This library is based on [ICS OpenVPN by Arne Schwabe](https://github.com/schwabe/ics-openvpn).
-
-## Building
+## Building from Source
 
 To build the library yourself:
 
@@ -79,7 +110,29 @@ To build the library yourself:
 git clone https://github.com/nizwar/ics-openvpn.git
 cd ics-openvpn
 git submodule update --init --recursive
-./gradlew :openvpn-library:assembleRelease
+./gradlew :openvpn-library:assembleOvpn23Release
 ```
 
-The AAR files will be generated in `openvpn-library/build/outputs/aar/`.
+The AAR file will be generated in `openvpn-library/build/outputs/aar/`.
+
+## Version History
+
+- **v1.0.0** - Initial release with OpenVPN 3 support
+
+## Contributing
+
+This library is built from the upstream [ICS OpenVPN](https://github.com/schwabe/ics-openvpn) project. For OpenVPN-related issues, please refer to the original repository.
+
+For library packaging and distribution issues, please open an issue in this repository.
+
+## License
+
+This project maintains the same license as the original ICS OpenVPN:
+- GNU General Public License v2.0
+- See [LICENSE.txt](doc/LICENSE.txt) for full terms
+
+## Credits
+
+- Original ICS OpenVPN project by [Arne Schwabe](https://github.com/schwabe)
+- OpenVPN community for the excellent VPN software
+- JitPack for seamless library distribution

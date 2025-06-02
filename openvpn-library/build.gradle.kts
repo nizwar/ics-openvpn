@@ -59,12 +59,6 @@ android {
             dimension = "ovpnimpl"
             buildConfigField("boolean", "openvpn3", "true")
         }
-
-        create("ovpn2")
-        {
-            dimension = "ovpnimpl"
-            buildConfigField("boolean", "openvpn3", "false")
-        }
     }
 
     compileOptions {
@@ -175,44 +169,13 @@ afterEvaluate {
                     }
                 }
             }
-            
-            register<MavenPublication>("ovpn2") {
-                groupId = "com.github.nizwar"
-                artifactId = "ics-openvpn-v2"
-                version = findProperty("VERSION_NAME")?.toString() ?: "1.0.0"
-                
-                // Use the ovpn2 AAR artifact
-                afterEvaluate {
-                    from(components["ovpn2Release"])
-                }
-                
-                pom {
-                    name.set("ICS OpenVPN Library (OpenVPN 2)")
-                    description.set("OpenVPN for Android as a library (AAR) - OpenVPN 2 variant")
-                    url.set("https://github.com/nizwar/ics-openvpn")
-                    
-                    licenses {
-                        license {
-                            name.set("GNU General Public License v2.0")
-                            url.set("https://www.gnu.org/licenses/gpl-2.0.html")
-                        }
-                    }
-                    
-                    developers {
-                        developer {
-                            id.set("nizwar")
-                            name.set("Nizwar")
-                            email.set("nizwar@example.com")
-                        }
-                    }
-                    
-                    scm {
-                        connection.set("scm:git:git://github.com/nizwar/ics-openvpn.git")
-                        developerConnection.set("scm:git:ssh://github.com:nizwar/ics-openvpn.git")
-                        url.set("https://github.com/nizwar/ics-openvpn/tree/main")
-                    }
-                }
-            }
         }
+    }
+}
+
+// Fix task dependency issue for JitPack
+afterEvaluate {
+    tasks.named("publishOvpn23PublicationToMavenLocal") {
+        dependsOn("bundleOvpn23ReleaseAar")
     }
 }
