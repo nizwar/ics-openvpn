@@ -144,7 +144,9 @@ afterEvaluate {
                 version = findProperty("VERSION_NAME")?.toString() ?: "1.0.0"
                 
                 // Use the ovpn23 AAR artifact
-                artifact("$buildDir/outputs/aar/${project.name}-ovpn23-release.aar")
+                afterEvaluate {
+                    from(components["ovpn23Release"])
+                }
                 
                 pom {
                     name.set("ICS OpenVPN Library (OpenVPN 3)")
@@ -180,7 +182,9 @@ afterEvaluate {
                 version = findProperty("VERSION_NAME")?.toString() ?: "1.0.0"
                 
                 // Use the ovpn2 AAR artifact
-                artifact("$buildDir/outputs/aar/${project.name}-ovpn2-release.aar")
+                afterEvaluate {
+                    from(components["ovpn2Release"])
+                }
                 
                 pom {
                     name.set("ICS OpenVPN Library (OpenVPN 2)")

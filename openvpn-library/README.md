@@ -1,6 +1,14 @@
 # ICS OpenVPN Library
 
-This is a library version of [ICS OpenVPN](https://github.com/schwabe/ics-openvpn) that can be used as an Android library (AAR) in your projects.
+A ready-to-use Android library (AAR) built from the popular [ICS OpenVPN](https://github.com/schwabe/ics-openvpn) project, packaged for easy integration via JitPack.
+
+## Features
+
+- 🔒 **OpenVPN 2 and OpenVPN 3 Support** - Choose between two flavors
+- 📦 **AAR Format** - Easy integration as Android library
+- 🚀 **JitPack Distribution** - Simple dependency management
+- 🔧 **Ready to Use** - Pre-compiled with all native dependencies
+- 📱 **Android 21+** - Supports Android 5.0 and above
 
 ## Usage with JitPack
 
