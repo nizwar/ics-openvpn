@@ -1,0 +1,6 @@
+jdk:
+  - openjdk17
+before_install:
+  - git submodule update --init --recursive --depth 1
+install:
+  - ./gradlew :openvpn-library:assembleRelease :openvpn-library:publishToMavenLocal

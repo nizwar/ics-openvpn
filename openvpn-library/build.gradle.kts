@@ -8,6 +8,7 @@ import com.android.build.gradle.api.LibraryVariant
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
@@ -132,4 +133,82 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
     testImplementation("org.mockito:mockito-core:4.8.1")
     testImplementation("org.robolectric:robolectric:4.10.2")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("ovpn23") {
+                groupId = "com.github.nizwar"
+                artifactId = "ics-openvpn"
+                version = findProperty("VERSION_NAME")?.toString() ?: "1.0.0"
+                
+                // Use the ovpn23 AAR artifact
+                artifact("$buildDir/outputs/aar/${project.name}-ovpn23-release.aar")
+                
+                pom {
+                    name.set("ICS OpenVPN Library (OpenVPN 3)")
+                    description.set("OpenVPN for Android as a library (AAR) - OpenVPN 3 variant")
+                    url.set("https://github.com/nizwar/ics-openvpn")
+                    
+                    licenses {
+                        license {
+                            name.set("GNU General Public License v2.0")
+                            url.set("https://www.gnu.org/licenses/gpl-2.0.html")
+                        }
+                    }
+                    
+                    developers {
+                        developer {
+                            id.set("nizwar")
+                            name.set("Nizwar")
+                            email.set("nizwar@example.com")
+                        }
+                    }
+                    
+                    scm {
+                        connection.set("scm:git:git://github.com/nizwar/ics-openvpn.git")
+                        developerConnection.set("scm:git:ssh://github.com:nizwar/ics-openvpn.git")
+                        url.set("https://github.com/nizwar/ics-openvpn/tree/main")
+                    }
+                }
+            }
+            
+            register<MavenPublication>("ovpn2") {
+                groupId = "com.github.nizwar"
+                artifactId = "ics-openvpn-v2"
+                version = findProperty("VERSION_NAME")?.toString() ?: "1.0.0"
+                
+                // Use the ovpn2 AAR artifact
+                artifact("$buildDir/outputs/aar/${project.name}-ovpn2-release.aar")
+                
+                pom {
+                    name.set("ICS OpenVPN Library (OpenVPN 2)")
+                    description.set("OpenVPN for Android as a library (AAR) - OpenVPN 2 variant")
+                    url.set("https://github.com/nizwar/ics-openvpn")
+                    
+                    licenses {
+                        license {
+                            name.set("GNU General Public License v2.0")
+                            url.set("https://www.gnu.org/licenses/gpl-2.0.html")
+                        }
+                    }
+                    
+                    developers {
+                        developer {
+                            id.set("nizwar")
+                            name.set("Nizwar")
+                            email.set("nizwar@example.com")
+                        }
+                    }
+                    
+                    scm {
+                        connection.set("scm:git:git://github.com/nizwar/ics-openvpn.git")
+                        developerConnection.set("scm:git:ssh://github.com:nizwar/ics-openvpn.git")
+                        url.set("https://github.com/nizwar/ics-openvpn/tree/main")
+                    }
+                }
+            }
+        }
+    }
 }
