@@ -1,6 +1,10 @@
 jdk:
   - openjdk17
+env:
+  JITPACK: "true"
 before_install:
   - git submodule update --init --recursive --depth 1
+  - sudo apt-get update
+  - sudo apt-get install -y swig cmake ninja-build
 install:
-  - ./gradlew :openvpn-library:assembleRelease :openvpn-library:publishToMavenLocal
+  - ./gradlew :openvpn-library:assembleOvpn23Release :openvpn-library:publishToMavenLocal
