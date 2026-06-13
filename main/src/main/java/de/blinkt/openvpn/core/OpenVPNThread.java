@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.concurrent.CancellationException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -61,7 +63,9 @@ public class OpenVPNThread implements Runnable {
     }
 
     public void stopProcess() {
-        mProcess.destroy();
+        if (mProcess != null) {
+            mProcess.destroy();
+        }
     }
 
     void setReplaceConnection()
@@ -88,6 +92,7 @@ public class OpenVPNThread implements Runnable {
             } catch (InterruptedException ie) {
                 VpnStatus.logError("InterruptedException: " + ie.getLocalizedMessage());
             }
+            Log.i(TAG, "OpenVPN process exit value " + exitvalue);
             if (exitvalue != 0) {
                 VpnStatus.logError("Process exited with exit value " + exitvalue);
             }
@@ -127,6 +132,7 @@ public class OpenVPNThread implements Runnable {
         String lbpath = genLibraryPath(argv, pb);
 
         pb.environment().put("LD_LIBRARY_PATH", lbpath);
+        pb.environment().put("OPENSSL_armcap", "0");
         pb.environment().put("TMPDIR", mTmpDir);
 
         pb.redirectErrorStream(true);
@@ -146,6 +152,7 @@ public class OpenVPNThread implements Runnable {
                 if (logline == null)
                     return;
 
+                Log.i(TAG, "OpenVPN output: " + logline);
                 if (logline.startsWith(DUMP_PATH_STRING))
                     mDumpPath = logline.substring(DUMP_PATH_STRING.length());
 
@@ -181,6 +188,7 @@ public class OpenVPNThread implements Runnable {
             }
         } catch (InterruptedException | IOException e) {
             VpnStatus.logException("Error reading from output of OpenVPN process", e);
+            Log.e(TAG, "OpenVPN process failed for argv=" + Arrays.toString(argv), e);
             mStreamFuture.cancel(true);
             stopProcess();
         }
@@ -190,7 +198,9 @@ public class OpenVPNThread implements Runnable {
 
     private String genLibraryPath(String[] argv, ProcessBuilder pb) {
         // Hack until I find a good way to get the real library path
-        String applibpath = argv[0].replaceFirst("/cache/.*$", "/lib");
+        String applibpath = new java.io.File(argv[0]).getParent();
+        if (applibpath == null)
+            applibpath = argv[0].replaceFirst("/cache/.*$", "/lib");
 
         String lbpath = pb.environment().get("LD_LIBRARY_PATH");
         if (lbpath == null)
@@ -205,6 +215,10 @@ public class OpenVPNThread implements Runnable {
     }
 
     public OutputStream getOpenVPNStdin() throws ExecutionException, InterruptedException {
-        return mStreamFuture.get();
+        try {
+            return mStreamFuture.get();
+        } catch (CancellationException e) {
+            throw new ExecutionException(e);
+        }
     }
 }
